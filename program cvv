@@ -1,0 +1,191 @@
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+
+class Program
+{
+static void Main(string[] args)
+{
+Console.WriteLine(”==============================”);
+Console.WriteLine(”  CVV / CVC Calculator Tool  “);
+Console.WriteLine(”==============================”);
+Console.WriteLine();
+
+```
+    try
+    {
+        // --- INPUT ---
+        Console.Write("CVK (32 hex char, 16 byte): ");
+        string cvkHex = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+        Console.Write("PAN                       : ");
+        string pan = Console.ReadLine()?.Trim() ?? "";
+
+        Console.Write("Expiry (YYMM)             : ");
+        string expiry = Console.ReadLine()?.Trim() ?? "";
+
+        Console.Write("Service Code (varsayilan 101): ");
+        string sc = Console.ReadLine()?.Trim() ?? "";
+        if (string.IsNullOrEmpty(sc)) sc = "101";
+
+        Console.Write("Dogrulanacak CVV (bos birak = hesapla): ");
+        string inputCvv = Console.ReadLine()?.Trim() ?? "";
+
+        Console.WriteLine();
+
+        // --- VALIDATE ---
+        if (cvkHex.Length != 32)
+            throw new Exception("CVK 32 hex karakter olmali (16 byte).");
+        if (pan.Length < 13 || pan.Length > 19)
+            throw new Exception("PAN gecersiz uzunluk.");
+        if (expiry.Length != 4)
+            throw new Exception("Expiry YYMM formatinda 4 karakter olmali.");
+        if (sc.Length != 3)
+            throw new Exception("Service Code 3 karakter olmali.");
+
+        byte[] cvk = HexToBytes(cvkHex);
+
+        // --- HESAPLA ---
+        string calculated    = CalculateCVV(pan, expiry, sc, cvk);
+        string calculatedCVV2 = CalculateCVV(pan, expiry, "000", cvk);
+
+        Console.WriteLine("--- SONUC ---");
+        Console.WriteLine($"CVV  (Track2, SC={sc}) : {calculated}");
+        Console.WriteLine($"CVV2 (Baskili, SC=000): {calculatedCVV2}");
+        Console.WriteLine();
+
+        // --- DOGRULA ---
+        if (!string.IsNullOrEmpty(inputCvv))
+        {
+            bool match = inputCvv == calculated || inputCvv == calculatedCVV2;
+            Console.WriteLine($"Girilen CVV  : {inputCvv}");
+            Console.WriteLine($"Dogrulama    : {(match ? "✅ GECERLI" : "❌ HATALI")}");
+        }
+
+        // --- DETAY ---
+        Console.WriteLine();
+        Console.WriteLine("--- HESAPLAMA DETAYI ---");
+        PrintDetail(pan, expiry, sc, cvk);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"\n[HATA] {ex.Message}");
+    }
+
+    Console.WriteLine("\nCikmak icin bir tusa basin...");
+    Console.ReadKey();
+}
+
+// ─── CVV CORE ───────────────────────────────────────────────────────────
+
+static string CalculateCVV(string pan, string expiry, string serviceCode, byte[] cvk)
+{
+    // Input string: PAN + Expiry(YYMM) + ServiceCode → 32 hex char
+    string raw = pan + expiry + serviceCode;
+    raw = raw.PadRight(32, '0').Substring(0, 32);
+
+    byte[] data   = HexStringToBytes(raw);   // 16 byte
+    byte[] block1 = data[0..8];
+    byte[] block2 = data[8..16];
+
+    // 3DES ECB ile block1 şifrele
+    byte[] enc1 = TripleDesEncrypt(cvk, block1);
+
+    // XOR
+    byte[] xored = new byte[8];
+    for (int i = 0; i < 8; i++)
+        xored[i] = (byte)(enc1[i] ^ block2[i]);
+
+    // Tekrar 3DES
+    byte[] final = TripleDesEncrypt(cvk, xored);
+
+    string hexResult = BytesToHex(final);
+    return Decimalize(hexResult, 3);
+}
+
+static void PrintDetail(string pan, string expiry, string sc, byte[] cvk)
+{
+    string raw = pan + expiry + sc;
+    raw = raw.PadRight(32, '0').Substring(0, 32);
+
+    byte[] data   = HexStringToBytes(raw);
+    byte[] block1 = data[0..8];
+    byte[] block2 = data[8..16];
+    byte[] enc1   = TripleDesEncrypt(cvk, block1);
+
+    byte[] xored = new byte[8];
+    for (int i = 0; i < 8; i++)
+        xored[i] = (byte)(enc1[i] ^ block2[i]);
+
+    byte[] final = TripleDesEncrypt(cvk, xored);
+    string hexResult = BytesToHex(final);
+
+    Console.WriteLine($"  Input string  : {raw}");
+    Console.WriteLine($"  Block1        : {BytesToHex(block1)}");
+    Console.WriteLine($"  Block2        : {BytesToHex(block2)}");
+    Console.WriteLine($"  3DES(Block1)  : {BytesToHex(enc1)}");
+    Console.WriteLine($"  XOR result    : {BytesToHex(xored)}");
+    Console.WriteLine($"  3DES(XOR)     : {hexResult}");
+    Console.WriteLine($"  Decimalized   : {Decimalize(hexResult, 3)}");
+}
+
+// ─── DECIMALIZATION ─────────────────────────────────────────────────────
+
+static string Decimalize(string hex, int length)
+{
+    // Önce rakamlar
+    string digits  = new string(hex.Where(char.IsDigit).ToArray());
+    // Sonra harfler → A=0 B=1 C=2 D=3 E=4 F=5
+    string letters = new string(
+        hex.Where(c => c >= 'A' && c <= 'F')
+           .Select(c => (char)('0' + (c - 'A')))
+           .ToArray());
+
+    string combined = digits + letters;
+    return combined.Length >= length
+        ? combined.Substring(0, length)
+        : combined.PadLeft(length, '0');
+}
+
+// ─── CRYPTO ─────────────────────────────────────────────────────────────
+
+static byte[] TripleDesEncrypt(byte[] key, byte[] data)
+{
+    // 16-byte 2-key 3DES → expand to 24 bytes (K1+K2+K1)
+    byte[] key24 = key.Length == 16
+        ? key.Concat(key[0..8]).ToArray()
+        : key;
+
+    using var des = TripleDES.Create();
+    des.Mode      = CipherMode.ECB;
+    des.Padding   = PaddingMode.None;
+    des.Key       = key24;
+
+    using var enc = des.CreateEncryptor();
+    return enc.TransformFinalBlock(data, 0, data.Length);
+}
+
+// ─── HEX HELPERS ────────────────────────────────────────────────────────
+
+static byte[] HexToBytes(string hex)
+{
+    hex = hex.Replace(" ", "");
+    return Enumerable.Range(0, hex.Length / 2)
+                     .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
+                     .ToArray();
+}
+
+// PAN+expiry+sc string'i ASCII değil, her iki hex digit = 1 byte
+static byte[] HexStringToBytes(string digitString)
+{
+    // Her karakter bir nibble — iki karakter bir byte
+    return Enumerable.Range(0, digitString.Length / 2)
+                     .Select(i => Convert.ToByte(digitString.Substring(i * 2, 2), 16))
+                     .ToArray();
+}
+
+static string BytesToHex(byte[] bytes)
+    => BitConverter.ToString(bytes).Replace("-", "");
+```
+
+}
