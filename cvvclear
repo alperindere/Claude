@@ -1,0 +1,62 @@
+public static string CalculateCVV(
+    string pan, 
+    string expiry,   // YYMM
+    string serviceCode, 
+    byte[] cvkA,     // 8 bytes (single DES key sol yarısı)
+    byte[] cvkB)     // 8 bytes (single DES key sağ yarısı)
+{
+    // Adım 1: Input string (PAN + Expiry + ServiceCode)
+    string input = pan + expiry + serviceCode;
+    
+    // 32 hex char'a pad et (16 byte)
+    input = input.PadRight(32, '0').Substring(0, 32);
+    
+    byte[] data = HexToBytes(input); // 16 byte
+
+    // Adım 2: İki blok
+    byte[] block1 = data[0..8];
+    byte[] block2 = data[8..16];
+
+    // Adım 3: 3DES ile Block1 şifrele (CVK = CVK_A + CVK_B)
+    byte[] cvk = cvkA.Concat(cvkB).ToArray(); // 16 byte 2-key 3DES
+    byte[] enc1 = TripleDES_ECB_Encrypt(cvk, block1);
+
+    // Adım 4: XOR
+    byte[] xored = new byte[8];
+    for (int i = 0; i < 8; i++)
+        xored[i] = (byte)(enc1[i] ^ block2[i]);
+
+    // Adım 5: Tekrar 3DES
+    byte[] final = TripleDES_ECB_Encrypt(cvk, xored);
+    
+    string hexResult = BytesToHex(final); // 16 hex char
+
+    // Adım 6: Decimalization
+    return Decimalize(hexResult, 3);
+}
+
+private static string Decimalize(string hex, int length)
+{
+    // Önce tüm rakamları al
+    string digits = new string(hex.Where(char.IsDigit).ToArray());
+    
+    // Sonra harfleri (A=0, B=1, C=2, D=3, E=4, F=5)
+    string letters = new string(
+        hex.Where(c => c >= 'A' && c <= 'F')
+           .Select(c => (char)('0' + (c - 'A')))
+           .ToArray());
+    
+    string combined = digits + letters;
+    return combined.Substring(0, length);
+}
+
+private static byte[] TripleDES_ECB_Encrypt(byte[] key, byte[] data)
+{
+    using var des = TripleDES.Create();
+    des.Mode    = CipherMode.ECB;
+    des.Padding = PaddingMode.None;
+    des.Key     = key;
+    
+    using var enc = des.CreateEncryptor();
+    return enc.TransformFinalBlock(data, 0, data.Length);
+}
