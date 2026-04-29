@@ -1,1 +1,135 @@
-https://claude.ai/public/artifacts/7a051811-b972-4f3e-8b8a-1c27a3e8bb4d
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" font-family="'Segoe UI', Arial, sans-serif">
+
+  <!-- Background -->
+
+  <rect width="1200" height="700" fill="#F0F4F8"/>
+
+  <!-- ========== SWITCH & TAKAS bounding box ========== -->
+
+<rect x="320" y="200" width="700" height="420" rx="12" ry="12"
+fill="#EBF4FF" stroke="#1A56A0" stroke-width="2"/>
+<text x="336" y="228" font-size="13" font-weight="700" fill="#1A56A0" letter-spacing="1">SWITCH & TAKAS</text>
+
+  <!-- ========== NETWORK box (top center) ========== -->
+
+<rect x="470" y="30" width="220" height="64" rx="10" ry="10"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="2"/>
+<text x="580" y="57" font-size="14" font-weight="700" fill="#1A56A0" text-anchor="middle">NETWORK</text>
+<text x="580" y="77" font-size="12" fill="#1A56A0" text-anchor="middle">(BKM, VISA, MASTER..)</text>
+
+  <!-- Network ↔ SwitchGate arrows (green, bidirectional) -->
+
+  <!-- Down arrow: Network → SwitchGate -->
+
+  <line x1="590" y1="94" x2="590" y2="258" stroke="#2E9E44" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <!-- Up arrow: SwitchGate → Network -->
+  <line x1="576" y1="258" x2="576" y2="94" stroke="#2E9E44" stroke-width="2.5" marker-end="url(#arrowGreenUp)"/>
+
+  <!-- ========== POS GATE bounding box ========== -->
+
+<rect x="40" y="230" width="250" height="220" rx="10" ry="10"
+fill="#EBF4FF" stroke="#1A56A0" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="56" y="254" font-size="12" font-weight="700" fill="#1A56A0" letter-spacing="0.5">POS GATE</text>
+
+  <!-- gate route ellipse -->
+
+  <ellipse cx="165" cy="320" rx="65" ry="30" fill="#FFFFFF" stroke="#1A56A0" stroke-width="2"/>
+  <text x="165" y="325" font-size="12" font-weight="600" fill="#1A56A0" text-anchor="middle">gate route</text>
+
+  <!-- Fiziki pos box -->
+
+<rect x="18" y="360" width="110" height="40" rx="8" ry="8"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="1.5"/>
+<text x="73" y="385" font-size="12" fill="#1A56A0" text-anchor="middle">Fiziki pos</text>
+
+  <!-- Provizyon box -->
+
+<rect x="18" y="430" width="110" height="40" rx="8" ry="8"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="2"/>
+<text x="73" y="455" font-size="13" font-weight="700" fill="#1A56A0" text-anchor="middle">Provizyon</text>
+
+  <!-- Fiziki pos → gate route -->
+
+  <line x1="128" y1="380" x2="148" y2="340" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <!-- gate route → Provizyon (evet) -->
+  <line x1="140" y1="348" x2="95" y2="430" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <text x="98" y="408" font-size="11" fill="#1A56A0">evet</text>
+
+  <!-- ========== Switch Gate box ========== -->
+
+<rect x="530" y="258" width="120" height="64" rx="10" ry="10"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="2"/>
+<text x="590" y="286" font-size="13" font-weight="700" fill="#1A56A0" text-anchor="middle">Switch</text>
+<text x="590" y="306" font-size="13" font-weight="700" fill="#1A56A0" text-anchor="middle">Gate</text>
+
+  <!-- gate route ↔ SwitchGate (green bidirectional) -->
+
+  <!-- gate route → SwitchGate -->
+
+  <line x1="230" y1="312" x2="530" y2="283" stroke="#2E9E44" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <!-- SwitchGate → gate route -->
+  <line x1="530" y1="296" x2="230" y2="325" stroke="#2E9E44" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+
+  <!-- ========== BIN_SP diamond ========== -->
+
+  <!-- Diamond shape centered at (460, 430) -->
+
+<polygon points="460,390 530,430 460,470 390,430"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="2"/>
+<text x="460" y="425" font-size="11" font-weight="700" fill="#1A56A0" text-anchor="middle">BIN_SP</text>
+<text x="460" y="442" font-size="10" fill="#1A56A0" text-anchor="middle">SP Kart onus?</text>
+
+  <!-- gate route → BIN_SP -->
+
+  <line x1="200" y1="345" x2="395" y2="420" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <!-- hayır label -->
+  <text x="490" y="390" font-size="11" fill="#1A56A0">hayır</text>
+  <!-- BIN_SP hayır → SwitchGate (up-right) -->
+  <line x1="530" y1="430" x2="545" y2="322" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- ========== GünSonu ekibi box ========== -->
+
+<rect x="960" y="160" width="140" height="40" rx="8" ry="8"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="1.5"/>
+<text x="1030" y="185" font-size="12" fill="#1A56A0" text-anchor="middle">GünSonu ekibi</text>
+
+  <!-- ========== acquirer_onl box ========== -->
+
+<rect x="870" y="258" width="130" height="40" rx="8" ry="8"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="1.5"/>
+<text x="935" y="283" font-size="12" fill="#1A56A0" text-anchor="middle">acquirer_onl</text>
+
+  <!-- ========== acquirer box ========== -->
+
+<rect x="1020" y="258" width="110" height="40" rx="8" ry="8"
+fill="#FFFFFF" stroke="#1A56A0" stroke-width="1.5"/>
+<text x="1075" y="283" font-size="12" fill="#1A56A0" text-anchor="middle">acquirer</text>
+
+  <!-- SwitchGate → acquirer_onl (green) -->
+
+  <line x1="650" y1="283" x2="870" y2="278" stroke="#2E9E44" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+
+  <!-- GünSonu → acquirer_onl -->
+
+  <line x1="990" y1="200" x2="955" y2="258" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <!-- GünSonu → acquirer -->
+  <line x1="1060" y1="200" x2="1070" y2="258" stroke="#1A56A0" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- ========== ARROW MARKERS ========== -->
+
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1A56A0"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2E9E44"/>
+    </marker>
+    <marker id="arrowGreenUp" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2E9E44"/>
+    </marker>
+  </defs>
+
+</svg>
