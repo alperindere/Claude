@@ -1,0 +1,21 @@
+
+"X Bey/Hanım merhaba. Bugün size Switch ve Takas uygulamalarımızın legacy yapıdan kurtarılarak yeni nesil bankacılık mimarimize (NGBA) geçiş sürecindeki stratejik dönüşüm adımlarını aktaracağım. Sunumumuzda ilk olarak Q2 çeyrek özetimizle başlayıp, ardından online tarafta değerlendirdiğimiz mimari alternatifleri ve seçtiğimiz hedef yapıyı paylaşacağım. Sonrasında bağımlılık yönetimi, AI destekli modernizasyon fırsatları ve eklerde yer alan teknik blueprint'imiz ile sunumu tamamlayacağız. Dilerseniz hemen çeyrek bazlı ilerlememizle başlayalım."
+
+
+
+
+Bu sayfada dönüşümün zamana yayılan olgunlaşma eğrisini görüyorsunuz. Q1 dönemini tamamen hazırlık, alternatif teknolojilerin araştırılması ve mevcut ekran envanterinin analiziyle geçirmiştik. Q2 ise bizim için adeta bir 'somutlaşma' çeyreği oldu. Teknik mimariden gRPC kullanımı için onay alarak network ekiplerimizle el sıkıştık. En önemlisi, teknik borç yaratan atıl ekran envanterimizi temizledik ve hedef mimaride takas verisinin nasıl akacağını netleştirdik. Şu anda Switch-gRPC iletişimi için PoC çalışmalarımız ve iş birimleriyle ortak çalıştaylarımız kesintisiz devam ediyor.
+
+
+Şimdi ajandamızın en kritik ayaklarından biri olan online Switch dönüşümü tarafında gerçekleştirdiğimiz derinlemesine teknik ve mimari kararlara geçiyoruz
+
+Son statü toplantımızdan bu yana en kritik kazanımımız REST ve API tarafında Oatpp framework'ü ile yaptığımız performans geliştirmesi oldu. C++ uygulama versiyonunu yükselterek JSON/REST kütüphanelerinde mikro-yönetişim odaklı ciddi bir optimizasyon sağladık ve bunu UAT ortamına taşıdık. Mimari değerlendirme tarafında ise iki mikroservisimiz arasında gRPC haberleşmesini test ettik ve yerel sunucularda REST/JSON'a kıyasla çok daha yüksek performanslı sonuçlar elde ettik. Gelecek adımlarda tüm dataları toplayarak farklı sunucularda test etmeye ve legacy sistemimizi güvenli bir şekilde bu modern ekosisteme bağlamaya odaklanacağız."
+
+Bu slayt bizim en kritik mimari yol ayrımımızdı. Sol tarafta gördüğünüz Alternatif 1'de, kanal yetkilendirmesi doğrudan Switch üzerinden geçiyordu; bu da hem latency (gecikme) yaratıyor, hem bir Single Point of Failure (SPOF) riski barındırıyor, hem de deploy etkisini büyütüyordu. Biz ise sağ taraftaki Alternatif 2 yönünde ilerleme kararı aldık. Neden? Çünkü kanalları doğrudan bir 'Acquiring Gate' üzerinden geçirip Onus ve Not-Onus ayrımını en başta yapıyoruz. Böylece gateway hop'unu sıfıra indiriyor, riskleri dağıtıyor ve sistemlerin birbirinden bağımsız deploy edilebilmesini sağlıyoruz."
+
+Peki bu sorumluluk ayrımı pratikte ne anlama geliyor? Kanallardan gelen tüm trafiği (ATM, Fiziki Pos, Android Pos vb.) Acquiring Gateway katmanında karşılıyoruz. Burası bizim merkezileştirilmiş kapımız; BIN kontrolü, Onus/Not-Onus kararı ve işlem yönlendirme tamamen burada, REST/JSON ve gRPC esnekliğiyle çözülüyor. Switch ise kendi asli görevine odaklanıyor: Network bazlı mesaj standartlarının korunması ve dış network entegrasyonlarının (Mastercard, BKM, VISA, JCB vb.) yönetimi. Bu net ayrım, sistemin ölçeklenebilirliğini inanılmaz derecede artırıyor."
+
+Burada Switch ve Takas dünyasının NGBA kapsamındaki büyük resmini görüyorsunuz. Sol taraftaki kanal akışımız, demin bahsettiğim Acquiring Gate ve Issuing Gateway yapısı üzerinden online olarak akarken; aşağıda RabbitMQ entegrasyonu ve ETL süreçleriyle beslenen offline takas modüllerimizi (İtiraz, Muhasebe, BKM/VISA/JCB Takas vb.) konumlandırdık
+
+Bu şemada ise takas süreçlerinden arındırılmış, sadece online Switch dünyasına odaklanmış hedef yapımızı görüyorsunuz. Buradaki en büyük kazanımımız, 'Bağımsız Deploy Edilebilen Switch Network Servisleri'.
+
