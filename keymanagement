@@ -1,0 +1,512 @@
+1. AMAÇ VE KAPSAM
+Bu doküman Xxxxx Bank kart sistemlerinde kullanılan key’lerin üretim, saklama, transfer ve yönetim esaslarını ve sorumlularını tanımlayarak, ilgili tarafların temel görev ve sorumluluklarının açıklanması amacıyla hazırlanmıştır. 
+2. SORUMLULUK
+Bu prosedür doğrultusunda işlem yapılmasından ve prosedürün güncelliğinin sağlanmasından prosedürde tanımı verilen Güvenlik Yetkilisi ve Key Yöneticisi sorumludur. 
+
+3. TANIMLAR
+Banka: Xxxxx Bank,
+Key: Kart ve POS uygulamalarının güvenliğini sağlayan 16’lık sistem alfa-sayısal anahtarlardır. (karakterlerdir) DES, TDES, RSA, AES algoritmaları ile birlikte kullanılırlar.
+Bileşen: Belirli bir algoritmaya göre bir araya getirilerek key’i oluşturan, key ile aynı uzunlukta alfa-sayısal karakterlerdir. Key’den farklı bir değerdir.
+PIN: Personal Identification Number, kart kullanıcısının doğrulanmasını sağlayan sayısal karakterlerdir. En az 4 karakter olabilir.
+HSM: Host/Hardware Security Module, üretici firma tarafından sağlanan arayüzlerde key’leri üreten, saklayan ve transfer eden donanımdır.
+LMK: Local Master Key, HSM’de tutulan diğer tüm key’leri şifreleyen ana key’dir.
+ZMK: Zone Master Key, iki güvenli alan arasında yapılacak key transferinde key’lerin şifrelenmesi için kullanılan key’dir. Her güvenli alan için ayrı ayrı tanımlanır.
+PEK: PIN Encryption Key, kart basım dosyalarında taşınan PIN’leri şifreleyen key’dir.
+KEK: Key Encryption Key, kart basım dosyalarında taşınan key’leri şifreleyen key’dir.
+CMK: Card Manufacturer Key, Kart üreticisi firmadan gelen kartların şifrelendiği key’dir.
+MAC : Messsage Authentication Key, otorizasyon mesajlarının değiştirilmeden ulaştığına dair dijital bir imzanın oluşturulmasını sağlayan key’dir.
+Yüksek güvenlikli işlemler : Gerçek ortam uygulama key işlemleridir.
+Güvenlik Yetkilisi (Güvenlik Yetkilisi): Güvenilir, key yönetim terminolojisine aşına, kendisine ait key bileşeninin sahibi ve sorumlusu olan Xxxxx Bank personelidir. 3 Asıl ve 3 yedekten oluşur.
+Key Yöneticisi (Key Manager): Key işlemlerinin prosedürlere uygun olarak işletilmesinden sorumlu Banka çalışanıdır. 1 asıl ve 1 yedekten oluşur.
+Key Kontrol Değeri (Key Check Value): Key veya bileşenlerin hatalı tuşlamaya karşı otomatik olarak yaratılan kontrol karakterleridir. En az 6 karakter olarak kullanılır.
+4. PROSEDÜR
+4.1. Yönetim Yapıları
+Prosedürde tanımlanan sorumlular tarafından yürütülen süreçlere ait esaslar aşağıda belirtilmiştir;
+
+4.1.1.Güvenlik Yetkilisi
+
+Güvenlik Yetkilisi, key bileşenlerinin üretilmesi, saklanması ve HSM’e girilmesinden sorumludur. Key bileşeni ilgili Güvenlik Yetkilisi’nin kasasında saklanır, bileşenin güvenliğinden Güvenlik Yetkilisi sorumludur.
+
+Kriptografik keylerin yaratılması, nakli, yüklenmesi, depolanması ve imha edilmesi için Xxxxxbank üst yönetimi bir Key Yöneticisi ve bir yedek personel atar.
+
+Atanan Key Yöneticisi, Key Yönetimi hizmetinin aksamamasını sağlamak amacıyla 3 asıl, 3 yedek güvenlik yetkilisi atamalıdır.
+
+Asıl ve yedek Güvenlik Yetkilisi personellerinin sahip olması gereken özellikler:
+
+Güvenilir çalışanlar içinden seçilmeli,
+
+Adli sicil kaydı bulunmamalı,
+
+Mali durum ve kredi sicili kontrolü yapılmalı,
+
+Sabit banka personeli olmalı; geçici işçi, denetçi gibi görevliller içinden seçilmemeli
+
+Bilgisayar bilgisi ve matematik altyapısı olmalı,
+
+Key Yönetimi konusunda mesleki bilgiye haiz ve terminolojiye hakim olmalıdır.
+
+Güvenlik Yetkisili’nin yeni bir göreve atandığı, bankadan ayrıldığı, uzun süreli iş seyahati, izin ya da hastalık gibi durumlarda görevi, yetkisi ve sorumlusu olduğu key ve bileşenleri Key Bileşen Devir Formu ile yeni güvenlik yetkilisine devredilir. Kasalar 15.050.P007 Müşterek Muhafaza Prosedürü’ne tabidir. Hastalık vb gibi planlı olmayan işe gelememe durumlarında İK sahipliğindeki 04.010.P007 Şifre Saklama Prosedürü gereğince işlem yapılır. Planlı değişim durumlarında 04.010.P009 Vekil Yönetici Atama Prosedürü’ne uygun olarak vekil tayin edilir.
+Key Yöneticileri, güvenlik yetkilileri ve yedekleri BT grubu, İç kontrol ve denetim grubu ve Operasyon grubu personellerinden seçilir.
+
+4.1.2.Key Yöneticisi
+Sistemde kullanılan tüm key’lerin ilgili esaslara uygun olarak işletildiğini güvence altına almakla görevlidir.
+
+Güvenlik Yetkililerinin key ile ilgili işlemlerinde usulüne uygun işlem yapılmadığını tespit etmesi halinde müdahale yetkisi vardır.
+
+Bu ve ilgili diğer prosedürlerin değişiklik ve güncellemelerinin yapılmasından sorumludur.
+
+Key Yöneticisi ve yedeği BT Ödeme Sistemleri bölümündeki 2 personelden oluşur.
+
+Asıl ve yedek Key Yöneticilerinin sahip olması gereken özellikler:
+
+Güvenilir çalışanlar içinden seçilmeli,
+
+En az bir yıldır Bankada çalışıyor olmalı,
+
+Adli sicil kaydı bulunmamalı,
+
+Mali durum ve kredi sicili kontrolü yapılmalı,
+
+Sabit banka personeli olmalı; geçici işçi, denetçi gibi görevliller içinden seçilmemeli
+
+Key Yönetimi konusunda mesleki bilgiye haiz ve terminolojiye hakim olmalıdır.
+
+Key Yöneticisinin Sorumlulukları:
+Key Yönetiminden sorumlu tüm personele görev ve yetki dağılımı yapmak, personeli güncel bilgilerle sürekli bilgilendirmek,
+
+Key Güvenlik Yetkilisinin olağan veya olağan dışı nedenlerle Bankada olmaması halinde gerekli görev dağılımlarını yapmak, ilan ve takip etmek,
+
+Log kayıtlarını denetlemek,
+
+Güvenlik yetkililler, tarafından yapılan tüm key yönetimi ilişkili aktivitelerde hazır bulunma ve onları denetlemek,
+
+Bankadaki tüm key yönetimi aktivitelerinden sorumlu olmak,
+
+Diğer Key Yöneticilerini ve Güvenlik Yetkililerini eğitmek, bilgilerini güncel tutmak,
+
+Başta Key Yönetimi ve mantıksal güvenlik olmak üzere tüm prosedürlere uygun davranmak.
+
+Key bileşenlerinin dağıtımından sonra Güvenlik Yetkilileri taşıma belgelerini (key transfer formu)  Key Yöneticisine elde teslim etmekle, ve Key Yöneticisi de bu belgeleri en az üç yıl muhafaza etmekle yükümlüdür.
+
+Key Yöneticisi, Güvenlik Yetkililerine gönderilen ‘Key Transfer Formu’ nun ulaşıp ulaşmadığını teyit etmekle yükümlüdür. Bu doğrulamanın üç hafta içerisinde yapılmaması halinde keylerin ele geçirildiği var sayılacak ve bu keyler iptal edilerek tüm ulaştırma prosedürü yeni keylerin üretiminin ardından tekrarlanacaktır.
+
+Key yöneticisi, diğer denetleyici yöneticilerin bilgisi olmadan Güvenlik Yetkililerinin yetkisini iptal etmek hakkına sahip değildir.
+
+4.2. Key Yönetim Prensipleri
+
+Kullanılacak key’lerle ilgili prensiplere aşağıda yer verilmiştir;
+
+•	Her key sadece tek bir amaçla kullanılabilir,
+•	Production ve test key’leri aynı olamaz,
+•	Key  Yönetimi ile ilgili her bir aktivite ilgili formlara kaydedilir,
+•	Key’ler sadece HSM’de üretilir ve uygulamalarda “hardcode” olarak tutulmaz
+•	Key şifreleyen key’ler (ZMK, KEK) her bir kriptografik alan için ayrı tanımlanır,
+•	Key ve bileşen işlemleri en az 2 kişinin bir araya gelmesi ile yapılabilir, (Güvenlik Yetkilisi ve  Key Yöneticisi)
+•	Her bir key önceden belirlenmiş bir geçerlilik süresine sahiptir.
+•	Tüm key hareketleri Key yöneticisi tarafından onaylanır
+•	Kriptografik key üretimi en az 3 key yönetim personeli (biri key yöneticisi diğerleri key görevlileri olacak şekilde) eşliğinde gerçekleştirilir.Simetrik key üretimi, DEA algoritması uygulanarak, HSM’e bağlı bir dump terminal kullanılarak gerçekleştirilir.
+•	Key uzunlukları her sene değerlendirilir ve daha uzun key’ler ile değiştirilmesi gereken key’ler,key üretim&yükleme prosedürlerine uygun olarak değiştirilir.
+•	Bütün key aktiviteleri yüksek güvenlikli veri üretim odasında,dual kontrollü ve paylaşımlı bilgi prensiplerine uygun olarak gereçekleştirilir.
+•	Tüm kriptografik key’ler ve key bileşenleri Hardware Security Module (HSM)’de üretilir.
+•	Tüm key bileşenleri ve şifreleme key’leri “random” süreçlerle üretilir
+•	Tüm ZMK üretimi süreçlerinde,3 bileşen ayrı olarak üretilir
+•	Key bileşenlerinden gerçek key’i oluşturmak için,tüm bileşenlerin bilgisi olmaksızın key’in hiçbir “active” bit değerinin belirlenememesi ilkesi kullanılır
+•	Tüm üretilen key’ler “double length (32 hexadecimal – 16 bytes character)” uzunluğundadır
+•	Her bir key’in bir geçerlilik bitiş tarihi vardır.
+•	RSA key’leri en az 1408 bit üretilir (Yeni üretilen RSA key’leri 1408 bit ve fazlası olur)
+•	Bir key görevlisi değişirse;birincil,yedek key görevlisi ve key yöneticisi birlikte kasaya gider.Key,smartcard ve HSM keyleri envanteri çıkarılır.Envanter çıkarıldıktan sonra kasa ve içindekiler için yeni key görevlisi ilgili dökümanı imzalar
+•	Her bir key operasyonundan (key üretimi,key yükleme) önce,aşağıdaki fiziksel kontroller yapılır. Kurcalamadan şüphe duyulursa,key yönetimi aktivitesi durdurulmalı ve Güvenlik Yöneticisi durumdan haberdar edilmelidir:
+•	Kabin kilitli tutulur.
+•	Kabin anahtarları delik üzerinde tutulmaz
+•	Kabin içine giren ve çıkan ekstra kablolar bulunmaz
+•	Kabin içinde şüpheli bir cihaz (logger,listener vb.) bulunmaz
+•	HSM fiziksel olarak kurcalanmaz
+•	HSM LMK  key operasyonundan önce kontrol edilir.
+•	HSM Tarih ve saati her key operasyonundan önce kontrol edilir
+•	HSM firmware her key operasyonundan önce kontrol edilir
+
+
+4.3. HSM Erişimi
+HSM erişimi Xxxxx Bank lokal network’üne fiziksel veya mantıksal olarak dahil olmuş bilgisayarlar ile yapılabilir. Erişim firewall ile kısıtlanır.
+
+HSM’ye kendi API’leri kullanılarak yazılım yoluyla erişecek uygulamalar Key Yöneticisi’ne ilgili firma tarafından bildirilir ve onay alınır. Yazılım yaşam döngüsü içinde HSM erişiminde yazılımsal değişikliğe ihtiyaç duyulması halinde yine Key Yöneticisi’nin onayı sonrasında değişim gerçekleştirilir.
+
+
+4.4.Key Üretimi ve yükleme
+LMK dahil tüm key’ler en az 3 adet bileşenin HSM’e girilmesi ile oluşturulur. Her bir key’in her bir bileşeni farklı bir Güvenlik Yetkilisi tarafından üretilir, Key Bileşen Formu’na kaydedilir ve HSM’e girilir. Bileşenler girildikten sonra key’in HSM LMK’sı altında oluştuğu görüldükten sonra ilgili bileşenler Güvenlik Yetkilileri tarafından, gerekli ise banka ana kasasında saklanır.
+
+Key’ ler sistem odasında yer alan Thales HSM’ de oluşturulur. Key üretimi HSM’ e bağlanan bir dummy terminal aracılığıyla yapılmaktadır.
+
+Her bir key üretme ve yükleme işlemi Güvenlik Yetkilileri tarafından aktivite logu olarak key aktivite defterine kaydedilir. Üretilen ya da yüklenen key’ in güvenli şekilde saklanması gerekir ise ilgili key, key envanter defterine eklenir.
+
+Üretilen her bir key için key ömrü belirlenmek zorundadır. Belirlenen key ömrü key aktivite defterine kaydedilir. İlgili key in key ömrü key komponent formu ve key bileşen formuna da kaydedilir. Key ömrü dolmak üzere olan key’ ler expiry tarihinden en geç 1 ay önce değiştirilmelidir.
+
+Key yükleme işleminden önce 4.2 Key Yönetim Prensipleri bölümünde yer alan kontroller tamamlanmak zorundadır.
+
+4.4.1. Key Üretme
+
+Gerekli Koşullar :
+-	1.,2. ve 3. Key güvenlik yetkilisi ve Key yöneticisinin hazır bulunması
+-	HSM’in console port’una bağlı dummy terminal
+-	3 adet Key Bileşen Formu 
+-	3 adet Key Komponent Form
+
+Prosedür;
+1.	1. Güvenlik yetkilisi terminale key component i oluşturmak için ilgili komutu girer.
+2.	Key Komponent Formu’ na key adı, key ömrü, tarih gibi bilgileri doldurur.
+3.	Clear component karşı kuruma gönderilmek üzere key komponent formuna KCV ile beraber doldurur.
+4.	Encrypted component gerekli key bilgileri ve KCV ile key bileşen formuna doldurulur.
+5.	Aynı işlemler sırası ile 2. Ve 3. Güvenlik Yetkilisi’ lar tarafından gerçekleştirilir.
+6.	Database’ e girilmesi gereken key’ ler Güvenlik Yetkilisi’ lar tarafından sisteme yüklenir.
+7.	Eğer Key saklanmayacaksa key bileşen formu imha edilir.
+8.	Saklanacak key’ ler ise 4.5 Bileşen saklama prosedürüne uygun olarak saklanır.
+
+4.4.2. Key Yükleme
+
+Karşı kurumdan gelen key componentlerinin Xxxxx’ a yüklenmek üzere gönderilmesi durumu için geçerlidir.
+
+Gerekli Koşullar :
+-	1.,2. ve 3. Key Güvenlik Yetkilisi ve Key Yöneticisi’ nin hazır bulunması
+-	HSM’in console port’una bağlı dummy terminal
+-	HSM’in authorized mode’da olması
+-	3 Clear component (Karşı kurumdan gelen)
+-	3 adet Key File Form
+Prosedür;
+
+1.	1. Güvenlik Yetkilisi terminale key yüklemek için komutu girer.
+2.	Karşı kurumdan gelen 1. Clear komponent HSM’ e girilir.
+3.	Ekranda beliren KCV ile karşı kurumun gönderdiği komponent in KCV’ leri kontrol edilir.
+4.	Bulunan 1. encrypted ZMK component Key Bileşen Formu’ na yazılır.
+5.	Aynı işlemler 2. Ve 3. Officer’ lar tarafından tamamlanır.
+6.	3 Güvenlik Yetkilisi’ ın komponent i girmesi ardından oluşan complete KCV karşı kurumdan gelen complete KCV ile karşılaştırılır.
+7.	Saklanacak key’ ler ise 4.5 Bileşen saklama prosedürüne uygun olarak saklanır.
+
+4.4.3. Encrypted Komponentlerden Encrypted Key Oluşturma
+
+4.4.1 adımında üretilmiş ya da 4.4.2. adımında yüklenmiş komponentlerden encrypted key hesaplanması adımıdır.
+
+
+Gerekli Koşullar :
+-	1.,2. ve 3. Key Güvenlik Yetkilisi ve Key Yöneticisi’ nin hazır bulunması
+-	HSM’in console port’una bağlı dummy terminal
+-	HSM’in authorized mode’da olması
+-	3 Encrypted componenti  
+-	2 adet Key Bileşen Formu
+
+Prosedür;
+1.	1.Güvenlik Yetkilisi terminale ilgili komutu girer.
+2.	1.Encrypted komponent girilir.
+3.	2.Encrypted komponent 2.Güvenlik Yetkilisi tarafından girilir.
+4.	3.Encrypted kompoent 3.Güvenlik Yetkilisi tarafından girilir.
+5.	Encrypted key sağ ve sol olarak iki parçaya ayırılır ve Key Bileşen Formu’ na yazılır.
+6.	Database’ e girilmesi gereken key’ ler Güvenlik Yetkili’ leri tarafından sisteme yüklenir.
+7.	Eğer Key saklanmayacaksa key bileşen formu imha edilir.
+8.	Saklanacak key’ ler ise 4.5 Bileşen saklama prosedürüne uygun olarak saklanır.
+
+
+4.4.4. ZMK ile Encrypted Key’ in LMK altına alınması
+
+4.4.1, 4.4.2, 4.4.3 bölümlerinde anlatıldığı üzere ZMK’ nın LMK altına alınmasının ardından ZMK ile encrypted Key HSM’ e girilerek aktivite logu olarak kaydedilir. 
+
+
+4.5.Bileşen Saklama
+Key bileşenleri key bileşen formuna yazılı olarak saklanır. Bileşen, key kontrol değeri ile birlikte sahibi tarafından forma yazılır. Bileşenin yazılı olduğu kağıt,zarfa konarak, zarfın kapağı imzalanır. Zarf açılması halinde bozulduğu anlaşılacak şekilde yapıştırıcı bantla kapatılarak Güvenlik Yetkilisi’nin erişim yetkisi olduğu kasaya konulur. Kasanın anahtarlarının korunması Güvenlik Yetkilisi’nin sorumluluğundadır. Tüm işlemler Key Yöneticisi’nin nezareti altında yapılır ve Kasa Erişim Kayıt Formu’na  kaydedilir. 
+
+Her bir Güvenlik Yetkilisi’ ın LMK kartları ve key log defterleri sistem odasında konumlandırılmış şifreli kasalarda tutulur.
+Güvenlik Yetkilisi’ ların ana kasa anahtarları şifreli kasalarda tutulur.
+
+Şifreli Kasa 1 / 1 nolu officer için: Şifrenin ilk bölümü(4 karakter) – Güvenlik Yetkilisi 1
+				      : Şifrenin ikinci bölümü(4 karakter) – Key Yöneticisi
+
+Şifreli Kasa 2 / 2 nolu officer için: Şifrenin ilk bölümü(4 karakter) – Güvenlik Yetkilisi 2
+				      : Şifrenin ikinci bölümü(4 karakter) – Key Yöneticisi
+Şifreli Kasa 3 / 3 nolu officer için: Şifrenin ilk bölümü(4 karakter) – Güvenlik Yetkilisi 3
+				      : Şifrenin ikinci bölümü(4 karakter) – Key Yöneticisi
+
+Bu kasalara her erişildiğinde aktivite logu olarak kayıt edilir.
+
+Envantere alınarak kalıcı olarak saklanacak key’ ler ise banka ana kasasında tutulur. Banka ana kasasına erişebilmek için iç güvenlik biriminin dual control altında bulunan dış ana kasa kapısını açması gerekmektedir. Ardından her bir Güvenlik Yetkilisi kendilerine tahsis edilmiş iç kasa anahtarları ile kendi bölümüne ulaşır. Banka ana kasasına erişimler kasa içinde saklanan log defterine kaydedilir.
+
+4.6.Key Transferi
+Key’ler farklı kriptografik alanlar arasında ancak ilgili tarafla önceden paylaşılmış ZMK altında şifrelenerek yapılabilir. ZMK bileşenleri karşı taraf (kart üreticisi firma, kart kişiselleştirme hizmetinin alındığı firma, vb) tarafından gönderilebileceği gibi Xxxxx Bank tarafından üretilerek de gönderilebilir. 
+
+ZMK’nın Xxxxx Bank tarafından üretilmesi durumunda üretilen bileşenler karşı tarafın (kart üreticisi firma, kart kişiselleştirme hizmetinin alındığı firma, vb) bildireceği 3 Güvenlik Yetkilisi’nin elektronik posta adreslerine Key Transfer Formu doldurularak gönderilir. 
+
+Key transferi sadece aşağıdaki kurumlara yapılabilir:
+
+•	Personalizasyon ofisi
+•	Kart üretim şirketi
+•	BKM, Visa, Mastercard vb. kart otoriteleri
+•	Terminal tedarikçileri
+
+Key transferi minimum Visa/MasterCard Vendor Certification sahibi personalizasyon ofislerine yapılabilir. 
+
+Eğer key paylaşımı yurt içi/yurt dışı diğer banka/finansal kurumlar ile yapılacaksa karşı bankadan yazılı olarak 3 farklı key yöneticisinin ismi alınır. Üretilen key bileşenleri veya ZMK altında şifrelenmiş key’ler 3 farklı kişiye mühürlenmiş kapalı zarf ile posta yoluyla teslim edilir.
+
+4.6.1. Key Güvenlik Yetkililerinin Deklarasyonu
+Key transfer süreci Xxxxxbank Key Yöneticisinin güvenlik yetkilisi atama formunu karşı partinin Key yöneticisine aşağıdaki yollardan biri ile gönderilmesi ile başlar;
+-	Bire bir verilmesi
+-	Güvenli şekilde e-mail yolu ile
+-	Fax
+-	Kurye 
+Xxxxxbank Key yöneticisi aynı yollardan karşı partinin güvenlik yetkililerini alır. 
+
+4.6.2. Key Komponentleri Xxxxx Bank tarafından üretilecek ise
+Key Yöneticisi ilgili key’ in üretim sürecini yönetir. Sürecin tamamında güvenlik yetkilileri sadece kendi komponentlerine erişebilmelidir.
+Key komponentleri karşı tarafa tamper evident zarf içinde gönderilerek güvenlik yetkilisi tarafından imzalanmalıdır.
+
+Key Yöneticisi her güvenlik yetkilisinin karşı partinin doğru key yetkilisine gönderim yaptığından emin olmalıdır;
+-	Komponent 1 Xxxxxbank 1 nolu güvenlik yetkilisinden karşı kurum 1 nolu key - yetkilisine 
+-	Komponent 2 Xxxxxbank 2 nolu güvenlik yetkilisinden karşı kurum 2 nolu key yetkilisine
+-	Komponent 3 Xxxxxbank 3 nolu güvenlik yetkilisinden karşı kurum 3 nolu key yetkilisine
+Zarf Key komponent formu ve Key komponent transfer formunu içermelidir. Her bir zarf gönderimi karşı partinin key yetkilisine e-mail yolu ile bildirilmelidir.
+
+Güvenlik yetkilileri ilgili key’ leri farklı günlerde farklı kurye firmaları kullanarak göndermelidir. Key komponentleri gönderim zamanına kadar güvenlik yetkilileri tarafından sistem odasında yer alan şifreli kasada tutulmalı bu aktivite log defterine loglanmalıdır.
+
+Key komponent transfer formu karşı parti key yetkililerinin düzgün ve güvenli bir şekilde key komponetlerini aldıklarını konfirme ettikleri formdur. Bu formlar imzalandıktan sonra ilgili Xxxxxbank key güvenlik yetkilisine e-mail yolu ile geri iletilmeli, key yöneticisi ilgili formları 3 sene saklamalıdır.
+
+Key komponentlerinin güvenli bir şekilde karşı parti yetkililerine teslim edilene kadar süreç Xxxxxbank key yöneticisi tarafından takip edilir.
+
+Sürecin her hangi bir kısmında şüpheli bir olay gerçekleşir ise key transferi iptal edilerek ilgili key in açığa çıktığı varsayımıyla hareket edilir. Karşı parti uyarılır.
+
+4.6.3. Key komponentleri karşı partiden gönderilmiş ise;
+
+Karşı partiler tarafından oluşturulan key komponentleri Xxxxxbank güvenlik yetkilisi tarafından alındığı zaman Key Yöneticisi’ ne bilgi vermelidir.
+Güvenlik yetkilisi key komponent ini aldığı zaman aşağıdaki durumları kontrol etmelidir;
+-	Zarf üzerinde bir oynama olup olmadığı
+-	Göndericinin doğru kişi olduğu
+-	Gönderici imzası ile deklarasyon sırasında beyan edilen imzanın doğru olup olmadığı kontrol edilir.
+-	Key beklenen key midir?
+
+Bu kontrollerden herhangi biri uygun değilse güvenlik yetkilisi Key yöneticisini uyarmalıdır. Bu durumda ilgili key in açığa çıktığı varsayımıyla aksiyon alınarak key seremonisi yenilenmelidir.
+
+Güvenlik yetkilisi komponent i aldığı zaman zaman kaybetmeden şifreli kasaya koymalıdır. Bu aktivite log defterine loglanır.
+
+Bütün komponentler güvenli bir şekilde alındıktan sonra 4.4. Key yükleme ve üretme prosedürüne uygun olarak yüklenir. 
+
+4.7.Key Değişimi – İhlal Durumları
+Aşağıdaki durumlardan herhangi biri oluştuğunda mevcut key’lerde değişiklik yapılır:
+
+•	Key’in herhangi bir şekilde açığa çıkması,
+•	Bileşenlerden herhangi birisine ulaşılamaması
+
+Key değişikliği yapılması durumunda sahaya çıkmış mevcut kartların nasıl etkileneceği ile ilgili analiz bu prosedürün sorumluluk alanına giren bölüm/birimler tarafından yapılır. Değiştirilecek key’lerin üretimi standart key üretim prosedürü ile gerçekleştirilir. 
+
+Karşı bankaların etkilendiği bir key değişimi gerekli ise madde 4.4 uyarınca key üretilerek madde 4.6 uyarınca yeniden transfer edilir.
+
+Aşağıdaki durumlarda, bir ihlalden sözedilebilir:
+
+1)	Kurcalama
+
+a.	Zarf numaraları, tarih ve saatleri loglardakinden farklı ise,
+
+b.	Kurcalanamaz zarflarda, yetkisiz açma, zorlama veya açma denemesine dair herhangi bir işaret göründüğünde,
+
+2)	Kayıp kriptografik cihaz olması durumunda,
+
+3)	Yetkisiz kişilerin sisteme girmeye çalıştıkları tespit edildiğinde,
+
+4.7.1	Kurcalama
+
+Bir kurcalamadan şüphelenildiğinde, güvenlik yöneticisi ve key yöneticisi, diğer uzmanların da yardımıyla durumu tespit etmeye ve alınacak aksiyonları belirleme konusunda birlikte çalışırlar. Eğer kurcalama tespit edilirse, detaylı bir rapor hazırlayıp güvenlik komitesine sunarlar.
+
+Bir key’ in ihlal edildiğinden şüphelenilirse, etklenen tüm paydaşlar (banka, üretici, Visa, Mastercard, diğer) 24 saat içerisinde resmi olarak bilgilendirilir. Ve kart basımı geçici olarak durdurulur.
+
+Key yenilenmeden önce ihlalin sebebinin açıkca ortaya konması önemlidir. Yoksa, yeni key’ in de ihlale uğramış olma ihtimali vardır. İhlal tanımlandıkran ve önleyici aksiyonlar alındıktan sonra, prosedüre göre yeni key üretilir ve yüklenir.
+
+Keylerin ihlali veya şüphesi sözkonus ise aşağıdaki aksiyonlar alınır:
+
+•	ZMK ihlal edilmişse, ZMK altındaki encrypt edilen tüm keyler değiştirilir. Daha sonra kart basıma devam edilir.
+ 
+•	KEK ihlalinde, yeni KEK oluşturulur ve ilgililere iletirilir. Mevcut data, yeni KEK ile encrypt edilerek tekrar gönderilir. 
+
+•	Vendor ZMK ihlalinde, ZMK and KMC yenilenir. Vendor da değiştirdiğinde kart basımına devam edilir.
+
+•	Kart üreticisi MDK’ sı ihlal edilmiş ise, bu keyden üretilen tüm keyler ve bu keyi kullanan tüm kartlar yenilenir.
+
+•	Issuer RSA keyinin ihlal edildiğinden şüpheleniliyorsa, RSA key seti yenilenir.
+
+İhlale uğrayan key zarfı araştırma süresince tutulur. Bu süre zarfında, key, canlı key muamelesi görür.
+
+Key yenilendikten sonra, eski key, key imha prosedürüne göre imha edilir.  İhlale uğrayan keyler 72 saat içerisinde imha edilmelidir. 
+
+Key imha edildikten sonra, alınacak aksiyonlar banka içerisinde değerlendirilir. Riskin boyutuna bağlı olarak kartların yeniden basımı gerçekleştiilebilir.
+
+Keyin tüm kopyaları imha edilir.
+
+Eğer key, HSM içerisindeki bir key ise HSM imha edilmelidir.
+
+4.7.2	Kayıp Kriptograrik Cihaz
+
+Bir cihazın kaybolduğu tespit edildiğinde, güvenlik yöneticisi ve key yöneticisi durumu birlikte araştırırlar. Güvenlik komitesine haber vererek alınacak aksiyonların tespit edilmesini sağlarlar.Key yöneticisi ve güvenlik yetkilileri şunlara dikkat etmelidir;
+
+•	Cihazdaki tüm keylerin ihlal edildiği varsayılır ve yukarıda bahsedilen prosedür işletilir.
+
+•	Etkilenen tüm paydaşlara 24 saat içerisinde haber verilir. Ve sözkonusu keylerle ilgili aktiviterler geçici olarak durdurulur.
+
+4.7.3	Yetkisiz Erişim
+
+Sistem odasına veya sisteme yetkisiz bir giriş tespit edildiğinde durum güvenlik komitesine bildirilir ve alınacak aksiyonlara karar verilir.
+ 
+4.8.Key Yedekleme
+Key’ler HSM tarafından sağlanan smart kartlara yedeklenir. Yedekleme işi her yeni key grubu üretilmesi sonrasında Key Yöneticisi tarafından yapılır. Yedek key’lerin yazıldığı smart kartlar banka ana kasasında saklanır.
+
+4.9.Key İmhası
+İmha edilecek key’ler Key Yöneticisi tarafından HSM’den silinirler ve bileşenler Güvenlik Yetkilileri tarafından Key İmha Formu doldurularak geri okunması imkansız bir şekilde fiziksel olarak imha edilir.
+
+	HARDCOPY ANAHTARLAR
+Hardcopy anahtarın imhası sırasında kullanılacak prosedür şöyledir:
+
+Gerekli Koşullar :
+1.	1. 2. ve 3. Key Güvenlik Yetkilileri ve Key Yöneticisinin hazır bulunması
+2.	İmha edilecek anahtar kadar Key İmha Form
+3.	İmha edilecek anahtarın tüm kopyaları (acil durum için banka kasasında saklanan kopyaları dahil) hazır bulundurulur.
+
+İşleyiş :
+1.	Anahtar, fiziksel olarak saklandığı kasadan, key saklama prosedürüne uygun olarak çıkarılır.
+2.	Kağıt imha makinesi kullanılarak hardcopy anahtar imha edilir.
+3.	Key Envanter Defteri’ nden anahtar kaydı imha tarihine günün tarihi yazılarak düşülür.
+4.	Key aktivite Defteri’ ne de gerekli kayıt düşülür.
+5.	Key İmha Formu doldurulurak 1, 2, ve 3. Key Güvenlik Yetkilileri ve Key Yöneticisi tarafından imzalanır.
+6.	İmzalanmış form Key Yöneticisi tarafından saklanır.
+
+	SOFTCOPY ANAHTARLAR
+Softcopy anahtarın imhası sırasında kullanılacak prosedür şöyledir:
+
+Gerekli Koşullar :
+1.	1. 2. ve 3. Key Güvenlik Yetkilileri ve Key Yöneticisinin hazır bulunması
+2.	İmha edilecek anahtar kadar Key İmha Form
+3.	İmha edilecek anahtarın tüm kopyaları (acil durum için banka kasasında saklanan kopyaları dahil) hazır bulundurulur.
+
+İşleyiş :
+1.	Veritabanına giriş yapılarak silinmesi istenilen kayıt çağırılır.
+2.	Anahtar ve Key Check Value değerine 0 doldurularak update edilir.
+3.	Daha sonra kayıt tekrar çağırılarak 0 ile update olduğu kontrol edilir.
+4.	Kayıdın fiziksel olarak silinmesi için ilgili fonksiyon tuşuna basılır.
+5.	LMK yüklü smartcartlar 3 kez formatlanarak LMK imha edilir.
+6.	LMK yüklü arızalı smartcardlar ise makasla chip ortadan 2 ye kesilerek imha edilir.
+7.	Key Envanter Defteri’ nden anahtar kaydı imha tarihine günün tarihi yazılarak düşülür.
+8.	Key Aktivite Defteri’ ne gerekli kayıt düşülür.
+9.	Key İmha Formu doldurulurak 1, 2, ve 3. Key Güvenlik Yetkilileri ve Key Yöneticisi tarafından imzalanır.
+10.	İmzalanmış form Key Yöneticisi tarafından saklanır.
+
+4.10.Acil Durum
+Aşağıdaki durumlar acil durum olarak tanımlanır:
+
+•	HSM cihazının donanım veya yazılım olarak çalışamaz duruma gelmesi,
+•	HSM’de yüklü key’lerin kullanılamaz hale gelmesi,
+•	Key bileşenlerinin saklandığı kasalara yetkisiz erişim yapıldığının tespit edilmesi,
+•	Sahada kullanılan key’lerden bir veya birkaçının açığa çıktığının tespit edilmesi
+
+Bu durumlarda Güvenlik Yetkilisi ve Key Yöneticileri acil olarak olayın tespitinden sonra en geç 6 saat içinde toplanır ve alınacak aksiyona karar verir.
+
+4.11.HSM Arızalanması
+HSM’in donanım veya yazılımsal olarak arızalanması durumunda HSM’ye sadece HSM’yi sağlayan veya Bakım Destek Anlaşması imzalanmış firma müdahale edebilir. Firmanın HSM’ye yapacağı her türlü müdahale Key Yöneticisi nezaratinde gerçekleştirilir.
+
+4.12.Test Sistemleri
+Finansal etki yaratmayan test sistemlerinde kullanılan key’ler bu prosedürde tanımlandığı şekilde üretilerek kullanılmayabilirler. Test key’leri hiç bir şekilde production sistemlerinde kullanılamaz.
+
+4.13 Tmk Yükleme
+
+•	POS terminallerine key yüklemek üzere, key odasına giriş yetkisi bulunan 2 key yükleme yetkilisi, oda giriş kartlarını kapıdaki okuyucuya ayrı ayrı okutarak key odasına giriş yapar. 
+•	Odada bulunan personel giriş defterinde giriş tarihi, saati, kullanıcı adları bilgileri ve key officer bilgileri alanlarını doldurur.
+•	Key officerlar key leri ile hazır bulunur.
+•	Key yüklemek için kullanılan programın bulunduğu PC açılır.
+•	PC’de bulunan Key loader programı çalıştırılır. 
+•	Kullanıcı adı ve şifresi girilir. Onaylananarak, ikinci şifre alanı gelmesi sağlanır. 
+•	İkinci şikfre iki defa girilir, key loader programı açılır.
+•	Key ler ilk defa oluşturulurken, “Yeni Key” sekmesi seçilir, 
+•	Number of keys yazılır.
+•	Key Algorithm ‘Master Key’ seçilir
+•	Encryption Algorithm “Des (64-bit)” seçilir
+•	Number of Components “2” seçilir
+•	Starting Location “1” seçilir
+•	Star Input seçilerek componentlerin şifre girmesi için ekran açılır.
+•	Key officer1, component1 alanına(Key[1]) ve confirm alınana kaydeder
+•	Key officer2, component2 alanına(Key[1]) ve confirm alınana kaydeder
+•	Her iki key officer tarafından key girildikten sonra POS key yükleme yetkilisi, create key sekmesini seçerek oluşturulan key için “Key Name” alanına key için isim verilir “Save Key”, tuşlanır.
+•	Key POS terminaline yüklenmek üzere hazır hale getirilir.
+•	Key yüklenecek olan POS terminali PC’de bulunan COM Port’a takılır. 
+•	Key sayfasına eklenen MK (Master Key) seçilir, Options menüsünden “Comminication” seçilir.
+•	PC’de tanımlı COM Port seçilir, OK tuşlanır.
+•	Master Key POS terminaline yüklenir. POS restart edilerek, fişten ve PC bağlantısından çıkarılır.
+•	Key yüklemesi yapılacak farklı bir POS, PC ya bağlanır, PC’de tanımlı COM Port seçilir, OK tuşlanır. Master Key POS terminaline yüklenir.
+•	Yüklemeler tamamlandığında Personel odadan ayrılırken personel kayıt defterinde ad, soyad, tarih saat, yükleme yapılan POS adeti, modeli bilgileri yazılır, imzalanır.
+
+4.14 Tmk Üretim
+
+•	POS terminallerine key yüklemek üzere, key odasına giriş yetkisi bulunan 2 personel, oda giriş kartlarını kapıdaki okuyucuya ayrı ayrı okutarak key odasına giriş yapar. 
+•	Odada bulunan personel giriş defterinde giriş tarihi, saati, kullanıcı adları bilgileri ve key officer bilgileri alanlarını doldurur.
+•	Key üretimini yapacak olan uygulamanın çalıştığı PC şifresi 2 parça halinde dir , her bir kişi 1 parçasını girerek PC ye giriş yapılır.
+•	TMK üretimi yapılacak uygulamanın şifresi Pc şifresinden bağımsız 2 parça halindedir , key üretimi yapacak kişiler şifrelerini ayrı ayrı girerek TMK key üreten uygulamayı çalıştırabilirler.
+•	HSM server ip ve port bilgileri ekran üzerinden girilir.
+•	Kaç adet key üretileceği bilgisi ekran üzerinden girilir.
+•	“Generate TMK Keys” düğmesine basılarak keyler oluşturulur.
+•	Keyler printer dan iki ayrı kağıda yazdırılır.
+•	Şifrelenmiş keyler text formatından loglanır.
+•	Yüklemeler tamamlandığında Personel odadan ayrılırken personel kayıt defterinde ad, soyad, tarih saat, oluşturulan key adeti, yazılır, imzalanır.
+
+4.15 Hsm Devreye Alma & Devreden Çıkarma
+
+
+4.15.1	HSM TESLİM ALINMASI
+
+•	HSM seri numarası ve HSM tipi gönderici firmadan gönderim öncesinde alınır.
+•	HSM teslim alınması sırasında paket üzerinde müdahale olup olmadığı kontrolü yapılır 
+•	HSM teslim alınması en az 1 Güvenlik yetkilisi ve key yöneticisi tarafından yapılır.
+•	Daha önce alınmış olan HSM seri numarası ve tipi gelen HSM fatura bilgisi ve paketteki ile karşılaştırılır. 
+•	HSM anahtarları kontrol edilir. LMK işlemleri için anahtarların bulunması gereklidir.
+•	HSM paketi üzerinde müdahale ya da uyşmazlık var ise HSM gönderici kuruma iade edilir, teslim alınmaz.
+•	HSM donanım envanterine eklenir. 
+•	HSM teslim alındıktan sonra üzerindeki LMK değiştirilir.
+•	İşlem Key Aktivite defterine yazılır.
+
+4.15.2	HSM KONTROLLERİ
+
+•	HSM bataryaları 6 ayda bir sistem operatörü tarafından kontrol edilir.
+•	Bataryanın herhangi bir kesinti olması durmunda en az 7 gün yeterli seviyede kalması sağlanır.
+•	HSM üzerinde her hangi bir key işlemi yapılmadan önce HSM üzerine herhangi bir müdahale olup olmadığı işlemi yapacak kişi tarafından kontrol edilir.
+•	HSM üzerinde işlem yapmadan önce HSM’in Secure lambasının yanmadığı kontrol edilir.
+
+
+
+4.15.3	HSM ANAHTAR İMHASI
+
+HSM’in kendi fiziksel özelliği olarak açılması ya da müdahale edilmesi durmunda otomatik olarak içindeki LMK’lar silinir. Konsol üzerinden V komutu ile HSM üzerindeki LMK kontrol edilir. Bu işlem 3 kez tekrarlanır.
+
+
+4.15.4	HSM İMHASI
+
+HSM’in imhaya gönderilmesinden önce HSM üzerindeki LMK’lar ilgili officerlar tarafından silinir. İmhaya gönderilen Donanım Envanterinden çıkarılır. 
+
+
+4.16	HSM ANAHTAR ve KARTLARIN SAKLANMASI
+
+HSM işlemleri için 3 adet smart card ve 2 adet anahtar kullanılır. HSM kartları ve anahtarları Key Güvenlik Yetkililerine zimmetlenmiştir. Bu smart kartların dağılımı: 
+
+Asıl kartlar ve keyler, sistem odasında, yedek kartlar ise banka ana kasasında saklanır.
+
+HSM’ler çalışma saatleri içerisinde Officer 1 ve Officer 2 tarafından Authorize Konuma alınır. Çalışma saatleri dışında ise bilgi işlem operatörleri Officer1 ve Officer2’ye bilgi verir. 
+
+HSM Authorize konuma alınamadığı durum olması halinde operatörler ya da anahtar yönetim sorumluları tarafından KMS’ye bilgi verilir. 
+
+Boş ya da kullanılmayan HSM kartları Sistem Yönetim Bölüm Başkanı tarafından saklanır.
+
+
+5. DOKÜMANTASYON 
+	10.070.F003 Key Bileşen Formu
+	10.070.F004 Key Bileşen Devir Formu
+	10.070.F005 Kasa Erişim Kayıt Formu
+	10.070.F006 Key Transfer Formu (Türkçe)
+	10.070.F007 Key Transfer Formu (İngilizce)
+	10.070.F008 Key İmha Formu
+	Key Kayıt Formu
+
+6. KAYITLAR
+	Key Bileşen Formları
+	Key Bileşen Devir Formları
+	Kasa Erişim Kayıt Formları
+	Key Transfer Formları
+	Key İmha Formları
+	Key Kayıt Formları
+
