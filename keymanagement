@@ -510,3 +510,47 @@ Boş ya da kullanılmayan HSM kartları Sistem Yönetim Bölüm Başkanı taraf�
 	Key İmha Formları
 	Key Kayıt Formları
 
+
+
+Github'daki key management prosedürünüzü inceledim. Buna dayanarak, banka-banka entegrasyon dokümanınıza eklenebilecek "HSM ve Anahtar Yönetimi" bölümü için taslak maddeler hazırladım. İç prosedürünüzün ilgili kısımlarını karşı banka ile entegrasyon bağlamına uyarladım (kurumsal roller ve iç kasa detayları gibi tamamen dahili maddeleri çıkardım, karşılıklı işleyecek kısımları öne çıkardım):
+
+---
+
+**X. HSM VE ANAHTAR YÖNETİMİ**
+
+**X.1. Genel Esaslar**
+- Entegrasyon kapsamında kullanılacak tüm kriptografik anahtarlar (ZMK, KEK, PEK, MAC, TMK vb.) Thales veya muadili sertifikalı Hardware Security Module (HSM) ortamında üretilir; anahtarlar hiçbir koşulda uygulama katmanında "hardcode" veya clear-text saklanmaz.
+- Her anahtar tek bir amaç için kullanılır; production ve test anahtarları birbirinden ayrıdır ve test anahtarları hiçbir şekilde production ortamında kullanılamaz.
+- Üretilen tüm anahtarlar en az double-length (16 byte) uzunlukta olacak, RSA anahtarları asgari 1408 bit üretilecektir.
+- Taraflar arası anahtar transferi, önceden karşılıklı paylaşılmış bir ZMK altında şifrelenerek yapılır.
+
+**X.2. Sorumluluk ve Dual Control**
+- Her iki taraf da anahtar işlemlerinin yürütülmesinden sorumlu en az 1 Key Yöneticisi ve 3 asıl/3 yedek Güvenlik Yetkilisi (Security Officer) atar; atanan yetkililerin isim ve iletişim bilgileri yazılı olarak (Güvenlik Yetkilisi Deklarasyon/Atama Formu) karşı tarafa bildirilir.
+- Anahtar üretimi, yükleme ve transfer işlemleri en az iki kişinin (dual control) bir arada bulunmasıyla; ZMK bileşen üretimi ise en az 3 farklı Güvenlik Yetkilisi eşliğinde gerçekleştirilir.
+- Bileşenlerin tamamına aynı kişinin erişememesi ilkesi (split knowledge / no single person knowledge) her iki tarafça uygulanır.
+
+**X.3. Anahtar Üretimi, Bileşen Oluşturma ve Aktarım**
+- ZMK bileşenleri, taraflardan biri tarafından üretilip 3 farklı Güvenlik Yetkilisi'ne, kurcalamaya karşı korumalı (tamper-evident) mühürlü zarflarla, farklı günlerde farklı kurye/kanallar üzerinden gönderilir.
+- Her bileşen gönderimi Key Komponent Transfer Formu ile belgelenir; alıcı taraf zarf bütünlüğünü, gönderici kimliğini ve KCV (Key Check Value) uyumunu kontrol ettikten sonra teslim alımını onaylar.
+- Anahtar transfer formları her iki tarafça asgari 3 yıl saklanır.
+- Gönderilen bileşenlere ait teyit formu üç hafta içinde ilgili tarafa ulaşmazsa, anahtarın ele geçirilmiş sayılacağı ve yeniden üretim/transfer sürecinin başlatılacağı kabul edilir.
+
+**X.4. HSM Erişimi**
+- Karşı tarafın HSM'e API üzerinden erişecek yazılım/uygulama bilgileri (amaç, versiyon, erişim kapsamı) önceden yazılı olarak bildirilir ve onay alınır; erişim firewall ile kısıtlanır.
+- HSM üzerinde herhangi bir anahtar işlemi öncesinde fiziksel kurcalama, firmware ve tarih/saat kontrolleri yapılır; şüphe durumunda işlem durdurulup karşı taraf bilgilendirilir.
+
+**X.5. Anahtar Yenileme, İhlal ve Acil Durum Yönetimi**
+- Anahtarların geçerlilik süreleri taraflarca belirlenir ve süre dolmadan en geç 1 ay önce yenileme süreci başlatılır.
+- ZMK, KEK veya diğer anahtarlardan herhangi birinin ihlal edildiğinden şüphelenilmesi halinde durum 24 saat içinde karşı tarafa resmi olarak bildirilir; ilgili işlemler geçici olarak durdurulur ve etkilenen anahtarlar standart üretim/transfer prosedürüyle yenilenir.
+- İhlale uğrayan anahtarlar tespitten itibaren 72 saat içinde imha edilir; imha işlemi Key İmha Formu ile belgelenir.
+- HSM'in donanımsal/yazılımsal arızalanması, anahtarların kullanılamaz hale gelmesi gibi acil durumlarda taraflar olayın tespitinden itibaren en geç 6 saat içinde bir araya gelerek aksiyon kararı alır.
+
+**X.6. Loglama ve Dokümantasyon**
+- Anahtar üretimi, yükleme, transfer ve imha işlemlerinin tamamı aktivite logu / Key Aktivite Defteri'ne kaydedilir; loglar denetime açık şekilde saklanır.
+- Kullanılacak form seti (Key Bileşen Formu, Key Transfer Formu, Key İmha Formu) entegrasyon başlangıcında karşılıklı olarak paylaşılır ve standardize edilir.
+
+---
+
+Notlar:
+- İç prosedürünüzdeki kasa/zarf/şifre saklama gibi tamamen YKB'ye özel dahili detayları (örn. şifreli kasa kombinasyonları) dışarıda bıraktım — bunlar karşı bankayı ilgilendirmez ve paylaşılmaması gereken bilgiler.
+- İsterseniz bu maddeleri doğrudan mevcut entegrasyon dokümanınızın Word dosyasına işleyebilirim; dosyayı yükleyip hangi bölümün altına ekleneceğini belirtmeniz yeterli.
